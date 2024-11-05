@@ -5,27 +5,45 @@ output: pdf_document
 date: "2024-11-5"
 font: 12pt
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 data <- read.table("hcmv.txt",  header = TRUE)
 ```
 
-## R Markdown
+# 0. Contribution Statement
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Student 2
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Student 2 mainly worked on questions 2 and 5 and provided graphs for question 4.
 
-```{r cars}
-summary(cars)
+\pagebreak
+
+\pagenumbering{arabic}
+
+# Introduction
+
+### Data
+
+This data is from a publication by Chee et al. and describes the DNA sequence of CMV. A CMV DNA molecule has 229,354 complementary pairs of letters or base pairs. These scientists are in search of special patterns in the virus’ DNA that contains instructions for its reproduction: replication. They discovered a total of 296 palindromic sequences, each of which are at least 10 pairs long.
+
+### Objective
+
+The goals of this report are to investigate the distribution of genes among this DNA sequence.
+
+\pagebreak
+
+# Basic Analysis
+
+## Question 1
+
+### Methods
+
+```{r data, echo=FALSE}
+
 ```
 
-## Including Plots
+### Analysis
+### Conclusion
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Question 2

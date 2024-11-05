@@ -2,20 +2,38 @@
 data <- read.table("hcmv.txt", header = TRUE)
 head(data)
 
+N <- 200000
+gene <- seq(1, N)
+print(gene)
 
 # QUESTION 1
 library(lattice)
-N <- 200000
-n <- 300
+N <- 229354
+n <- 296
 gene <- seq(1, N)
+
+#first iteration
+set.seed(10)
+random_1 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
+random_1
+
+#second iteration
 set.seed(100)
-site.random <- sample.int(N, size=n, replace=FALSE) # locations uniformly randomly generated
-norm.quant <- seq(-3, 3, length.out=N)
-set.seed(100)
-site.norm <- sample.int(N, size=n, prob=dnorm(norm.quant), replace=FALSE) # site locations generated according to normal distribution
-set.seed(100)
-gene.ind <- 100000:103000
-gene.weight <- rep(1, N)
-gene.weight[gene.ind] <- 50
-set.seed(100)
-site.approxrandom <- sample.int(N, size=n, prob=gene.weight, replace=FALSE) # close to uniformly randomly
+random_2 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
+random_2
+
+#third iteration
+set.seed(1000)
+random_3 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
+random_3
+
+# erm not working
+trunc = 1000
+lvls = factor(c(0:(trunc-1),paste(">=",trunc,sep="")),levels=c(0:(trunc-1),paste(">=",trunc,sep="")))
+random_1_trunc = c(random_1[1:trunc], sum(random_1[-(1:trunc)]))
+
+
+# QUESTION 2
+
+# for plotting randomly chosen sites on a line
+stripplot(site.random, pch=16, cex=0.25) # 1-D Scatter plot

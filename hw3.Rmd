@@ -1,6 +1,6 @@
 ---
 title: "Homework 3"
-author: Heidi Tam and Student 2
+author: Student 1 and Student 2
 output: pdf_document
 date: "2024-11-5"
 font: 12pt
@@ -35,15 +35,57 @@ The goals of this report are to investigate the distribution of genes among this
 
 # Basic Analysis
 
-## Question 1
+## Question 1: RANDOM SCATTER
 
 ### Methods
 
-```{r data, echo=FALSE}
+We used ```replicate``` to take 100 simulations of a DNA sequence, with each simulation containing 296 palindrome sites. 
 
+```{r data, echo=FALSE}
+# SIMPLIFY = FALSE KEEPS EACH RESULT AS A SEPARATE VECTOR
+n = 100
+sequence_len = 229354
+palindrome_sites = 296
+set.seed(42)
+simulations <- replicate(n, sample(1:sequence_len, palindrome_sites, replace = FALSE), simplify = FALSE)
 ```
 
+QUANTITATIVE ANALYSIS:
+
+We will calculate the average distances between palindrome sites for each simulation to determine whether the palindrome sites are randomly distributed or if there are patterns or clusters. 
+
+```{r}
+# For each simulation, calculate the differences between the data points (palindrome sites), and take the mean
+average_distances <- sapply(simulations, function(simulation){
+    sorted_simulation <- sort(simulation) # Sort simulation to get correct distances
+    distances <- diff(sorted_simulation)
+    mean(distances)
+})
+```
+
+Now, we have a list of the average distances between palindrome sites in a DNA sequence. We will compute the mean of the average distances between the palindrome sites to provide a central measure of approximation.
+
+```{r}
+# On average, palindrome sites tend to be about 771.755 bases apart in simulated datasets. 
+mean(average_distances)
+```
+
+QUALITATIVE ANALYSIS:
+```{r}
+histogram <- hist(average_distances, breaks = 10, col = 'lightblue', main = 'Differences in Simulated Palindrome Distances', xlab = 'Average Distance Between Palindromes')
+```
+[TYPE ANALYSIS OF HISTOGRAM HERE]
+
+```{r}
+image(matrix(average_distances, ncol=1), col=heat.colors(max(average_distances)), main="Heatmap of Simulated Palindrome Density")
+```
+[TYPE ANALYSIS OF HEATMAP HERE]
+
 ### Analysis
+[KS ANALYSIS]
+[CHECK CONDITIONS]
+[CONDUCT TEST]
+
 ### Conclusion
 
 # Question 2

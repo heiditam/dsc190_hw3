@@ -39,15 +39,23 @@ The goals of this report are to investigate the distribution of genes among this
 
 ### Methods
 
-We used ```replicate``` to take 100 simulations of a DNA sequence, with each simulation containing 296 palindrome sites. 
+Here, we are using ```sample.int``` to conduct 1 simulation assuming a uniform spread. 
+```{r}
+N = 229354
+n = 296
+set.seed(10)
+random_1 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
+```
+
+We're interested in seeing how simulations vary when repeated many times, so we used ```replicate``` to take 100 simulations of a DNA sequence, with each simulation containing 296 palindrome sites. 
 
 ```{r data, echo=FALSE}
 # SIMPLIFY = FALSE KEEPS EACH RESULT AS A SEPARATE VECTOR
-n = 100
-sequence_len = 229354
-palindrome_sites = 296
-set.seed(42)
-simulations <- replicate(n, sample(1:sequence_len, palindrome_sites, replace = FALSE), simplify = FALSE)
+num_sim = 100
+N = 229354
+n = 296
+set.seed(10)
+simulations <- replicate(n, sample(1:N, n, replace = FALSE), simplify = FALSE)
 ```
 
 QUANTITATIVE ANALYSIS:
@@ -55,37 +63,46 @@ QUANTITATIVE ANALYSIS:
 We will calculate the average distances between palindrome sites for each simulation to determine whether the palindrome sites are randomly distributed or if there are patterns or clusters. 
 
 ```{r}
-# For each simulation, calculate the differences between the data points (palindrome sites), and take the mean
+# For each simulation, we will calculate the differences between the data points (palindrome sites), and take the mean
 average_distances <- sapply(simulations, function(simulation){
-    sorted_simulation <- sort(simulation) # Sort simulation to get correct distances
+    sorted_simulation <- sort(simulation) # We sorted the simulation to get correct distances
     distances <- diff(sorted_simulation)
     mean(distances)
 })
 ```
 
-Now, we have a list of the average distances between palindrome sites in a DNA sequence. We will compute the mean of the average distances between the palindrome sites to provide a central measure of approximation.
+Now, we have a list of the average distances between palindrome sites in a DNA sequence. We will compute the mean and variance of the average distances between the palindrome sites to provide a central measure of approximation.
 
 ```{r}
 # On average, palindrome sites tend to be about 771.755 bases apart in simulated datasets. 
 mean(average_distances)
+# The variance of the average distances, about 14.677, tells us there is moderate variability in the average distances between palindromes. We can confirm this with a qualitative analysis, as follows. 
+var(average_distances)
 ```
 
 QUALITATIVE ANALYSIS:
 ```{r}
 histogram <- hist(average_distances, breaks = 10, col = 'lightblue', main = 'Differences in Simulated Palindrome Distances', xlab = 'Average Distance Between Palindromes')
 ```
-[TYPE ANALYSIS OF HISTOGRAM HERE]
+The histogram of the average distance between palindromes is left-skewed, which suggests few small gaps between palindromes sites. The average distances appear to mostly be clustered between 770 and 780, but we also have palindromes distances that were as low as 755. This variation can indicate that the palindromes may not be uniformly spread and have clustering at particular locations, which was confirmed by the quantitative analysis above. This histogram is also unimodal, suggesting most palindrome sites are mostly spaced apart within a certain range. 
 
 ```{r}
 image(matrix(average_distances, ncol=1), col=heat.colors(max(average_distances)), main="Heatmap of Simulated Palindrome Density")
 ```
-[TYPE ANALYSIS OF HEATMAP HERE]
+We can visualize the spread of distances between palindromes in a heat map. The palindromes are generally uniformly spread out but experience clustering in certain areas. 
 
 ### Analysis
-[KS ANALYSIS]
-[CHECK CONDITIONS]
-[CONDUCT TEST]
-
+We will conduct a **KS Analysis** to test whether the distribution of palindrome sites in our simulated dataset is statistically similar to the real dataset. 
+**H0:** The distribution of simulated distances and real distances are the same.
+**H1:**: The distribution of simulated and real distances differ. 
+We meet the conditions to perform this test because the samples are independent and the data is continuous.
+We don't have the "real data", so we will take a sample and treat it like the "real data". 
+```{r}
+real_data_distances <- diff(sort(sample(1:N, n)))
+# KS test
+ks_test <- ks.test(average_distances, real_data_distances)
+```
 ### Conclusion
+With a p-value of p < 2.2 * 10^(-16), we can reject the null hypothesis, and there is a significant difference between the random scatters and real data. However, our inferences in the accuracy of this conclusion are limited because we simply drew another sample and treated it as the "real data", but our "real data", may not necessarily look like this. 
 
 # Question 2

@@ -105,4 +105,70 @@ ks_test <- ks.test(average_distances, real_data_distances)
 ### Conclusion
 With a p-value of p < 2.2 * 10^(-16), we can reject the null hypothesis, and there is a significant difference between the random scatters and real data. However, our inferences in the accuracy of this conclusion are limited because we simply drew another sample and treated it as the "real data", but our "real data", may not necessarily look like this. 
 
-# Question 2
+# Question 2: LOCATIONS & SPACING
+
+# Question 3: COUNTS
+### Methods
+We will make our list of all possible DNA locations, ranging from 1 to the 229354, denoted by N.
+```{r}
+DNA <- 1:N
+# INVESTIGATE REGIONS OF LENGTH 1000
+split_DNA <- split(DNA, ceiling(seq_along(DNA) / 1000))
+# function to count number of palindromes per region (observed counts)
+count_per_region <- function(region, palindrome_locations){
+  sum(region %in% data$location)
+}
+counts_1000 <- sapply(split_DNA, count_per_region, data$location)
+```
+
+### Analysis
+REGIONS OF SIZE 1,000
+We will conduct a chi-squared test, goodness of fit to compare the number of palindromes when each region has 1,000 bases.
+**H0:** There is no difference between the number of palindromes in regions of length 1,000 and number of palindromes that we would expect from uniform random scatter.
+**H1:** There is a difference between the number of palindromes in regions of length 1,000 and the number of palindromes we would expect from a uniform random scatter.
+
+First, we will check the conditions to make sure we can conduct this test.
+**Observed Counts**: Yes, we have observed counts of the number of palindromes. 
+**Independence**: The counts of the palindromes in each chunk are independent since they are non-overlapping.
+**Expected Frequency > 5**: When we have regions of length 1000 each, we would expect each region to have 296 / 230 chunks = 1.287 palindromes per chunk. We will still perform the chi-squared test, but it may not be accurate, so we need to be careful. 
+**
+
+``` {r}
+# number of palindromes we would expect for each region
+expected <- 296 / 230 # total palindromes / # chunks
+expected_vec <- rep(expected, 230)
+expected_prob <- expected_vec / sum(expected_vec)
+
+# perform a chi-squared test to compare observed counts with expected values
+chi_squared_test <- chisq.test(counts_1000, p = expected_prob)
+```
+
+With a p-value of 0.004 < 0.05, we reject the null hypothesis, and there is a difference between the number of palindromes in regions of length 1000 and a uniform random scatter. 
+
+Now, we will repeat this process but with larger region sizes.
+REGIONS OF SIZE 5,000
+```{r}
+split_DNA_5k <- split(DNA, ceiling(seq_along(DNA) / 5000))
+counts_5000 <- sapply(split_DNA_5k, count_per_region, data$location)
+expected_5k <- 296 / 46 # total palindromes / # chunks
+```
+Now that we have expected counts of 296 / 46 = 6.435, which is > 5, we meet the condition of having E_i >= 5, for all i. The rest of the conditions are still satisfied, as described above. 
+```{r}
+expected_vec_5k <- rep(expected_5k, 46)
+expected_prob_5k <- expected_vec_5k / sum(expected_vec_5k)
+chi_squared_test_5k <- chisq.test(counts_5000, p = expected_prob_5k)
+```
+Our p-value from this chi-squared test is now 0.02, which is < 0.05. We still reject the null hypothesis, and there is a difference between the number of palindromes in regions of length 1000 and a uniform random scatter. We will conduct this statistical test one last time with regions of size 10,000. 
+REGIONS OF SIZE 10,000
+```{r}
+split_DNA_10k <- split(DNA, ceiling(seq_along(DNA) / 10000))
+counts_10000 <- sapply(split_DNA_10k, count_per_region, data$location)
+expected_10k <- 296 / 23 # All conditions for the chi-squared test have been satisfied, described previously.
+expected_vec_10k <- rep(expected_10k, 23)
+expected_prob_10k <- expected_vec_10k / sum(expected_vec_10k)
+chi_squared_test_10k <- chisq.test(counts_10000, p = expected_prob_10k)
+```
+Our p-value went up once again! With a p-value of 0.317, p > 0.05. We fail to reject the null hypothesis, and there is no significant difference between the counts of palindromes in our non-overlapping regions of equal length with the counts we would expect from a uniform random scatter. 
+
+### Conclusion
+When our region of non-overlapping DNA is shorter, we are sampling less DNA and are more likely to think there is a significant difference of counts of palindromes in our DNA sequence compared to a uniform random scatter. As we increased our DNA region length, our p-value also went up. As we observe more DNA consecutively, we see that the pattern of palindromes does not really occur at such a high rate as it appears to in the smaller regions. A good analogy is that you are more likely to find palindromes in shorter words (eg 'mom', 'dad') than a full sentence (eg "Was it a car or a cat I saw?"). 

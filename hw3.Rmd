@@ -170,5 +170,30 @@ chi_squared_test_10k <- chisq.test(counts_10000, p = expected_prob_10k)
 ```
 Our p-value went up once again! With a p-value of 0.317, p > 0.05. We fail to reject the null hypothesis, and there is no significant difference between the counts of palindromes in our non-overlapping regions of equal length with the counts we would expect from a uniform random scatter. 
 
+GRAPHICAL ANALYSIS:
+To compare the counts of palindromes across different regions, we need to normalize them since the regions are of different lengths. We will find the number of palindromes per 1000 base pairs. 
+
+```{r}
+library(ggplot2)
+library(forcats)
+# 
+normalized_1000 <- counts_1000 / 1000 * 1000
+normalized_5000 <- counts_5000 / 5000 * 1000
+normalized_10000 <- counts_10000 / 10000 * 1000
+
+palindrome_counts <- data.frame(
+  RegionLength = factor(rep(c('normalized_1000', 'normalized_5000', 'normalized_10000'),
+                            times = c(length(normalized_1000), length(normalized_5000), length(normalized_10000)))),
+  Count = c(normalized_1000, normalized_5000, normalized_10000)
+)
+# reorder DataFrame
+palindrome_counts$RegionLength <- factor(palindrome_counts$RegionLength, levels = c('normalized_1000', 'normalized_5000', 'normalized_10000'))
+
+ggplot(palindrome_counts, aes(x = RegionLength, y = Count, fill = RegionLength)) + 
+  geom_boxplot() + ylab('Density of Palindromes per 1,000 Base Pairs') + 
+  labs(title = 'Comparison of Palindrome Density for DNA Regions of Varying Lengths')
+```
+In the graphs above, we are comparing the density of the palindromes for DNA regions of lengths 1,000; 5,000; and 10,000. The shorter DNA regions have notably more variance compared to the DNA sequences of a shorter length. The shorter sequences also have more outliers of a higher density, indicating a greater likelihood of having palindromes  compared to longer sequences; this is supported by our quantitative analysis. 
+
 ### Conclusion
 When our region of non-overlapping DNA is shorter, we are sampling less DNA and are more likely to think there is a significant difference of counts of palindromes in our DNA sequence compared to a uniform random scatter. As we increased our DNA region length, our p-value also went up. As we observe more DNA consecutively, we see that the pattern of palindromes does not really occur at such a high rate as it appears to in the smaller regions. A good analogy is that you are more likely to find palindromes in shorter words (eg 'mom', 'dad') than a full sentence (eg "Was it a car or a cat I saw?"). 

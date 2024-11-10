@@ -110,7 +110,19 @@ ggplot(palindrome_counts, aes(x = RegionLength, y = Count, fill = RegionLength))
 library(ggplot2)
 
 
-ggplot(palindrome_counts, aes(x = RegionLength, y = Count, fill = RegionLength)) + 
-  geom_boxplot() + ylab('Density of Palindromes per 1,000 Base Pairs') + 
-  labs(title = 'Comparison of Palindrome Density for DNA Regions of Varying Lengths')
+normalized_1000 <- counts_1000 / 1000 * 1000
+normalized_5000 <- counts_5000 / 5000 * 1000
+normalized_10000 <- counts_10000 / 10000 * 1000
+normalized_1000
 
+data_df <- as.data.frame(normalized_1000)
+data_df <- cbind(locations = rownames(data_df), data_df)
+rownames(data_df) <- 1:nrow(data_df)
+colnames(data_df) <- c("Interval", "Frequency")
+
+# Plot a histogram
+ggplot(data_df, aes(x = as.numeric(Interval), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Number of Palindromes per Region", y = "Frequency", 
+       title = "Histogram of Palindrome Count per Region") +
+  theme_minimal()

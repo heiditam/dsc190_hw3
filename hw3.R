@@ -7,33 +7,52 @@ gene <- seq(1, N)
 print(gene)
 
 # QUESTION 1
-library(lattice)
-N <- 229354
-n <- 296
-gene <- seq(1, N)
-
-#first iteration
+num_sim = 100
+N = 229354
+n = 296
 set.seed(10)
-random_1 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
-random_1
+simulations <- replicate(num_sim, sample(1:N, n, replace = FALSE), simplify = FALSE)
 
-#second iteration
-set.seed(100)
-random_2 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
-random_2
+average_distances <- sapply(simulations, function(simulation){
+  sorted_simulation <- sort(simulation) # We sorted the simulation to get correct distances
+  distances <- diff(sorted_simulation)
+  mean(distances)
+})
 
-#third iteration
-set.seed(1000)
-random_3 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
-random_3
+mean(average_distances)
+var(average_distances)
 
-# erm not working
-trunc = 1000
-lvls = factor(c(0:(trunc-1),paste(">=",trunc,sep="")),levels=c(0:(trunc-1),paste(">=",trunc,sep="")))
-random_1_trunc = c(random_1[1:trunc], sum(random_1[-(1:trunc)]))
+histogram <- hist(average_distances, breaks = 10, col = 'lightblue', main = 'Differences in Simulated Palindrome Distances', xlab = 'Average Distance Between Palindromes')
+image(matrix(average_distances, ncol=1), col=heat.colors(max(average_distances)), main="Heatmap of Simulated Palindrome Density")
 
 
 # QUESTION 2
+library(lattice)
 
-# for plotting randomly chosen sites on a line
-stripplot(site.random, pch=16, cex=0.25) # 1-D Scatter plot
+simulations <- replicate(num_sim, sample(1:N, n, replace = FALSE), simplify = FALSE)
+distances <- sapply(simulations, function(simulation){
+  sorted_simulation <- sort(simulation) # We sorted the simulation to get correct distances
+  distances <- diff(sorted_simulation) # s1, s2, s3, ...
+})
+
+# plotting distances distribution
+for (i in 1:ncol(distances)) {
+  print(stripplot(distances[,i], pch=16, cex=0.25)) # 1-D Scatter plot
+}
+
+# calculating sums of pairs
+pairwise_diffs <- sapply(seq(1, ncol(distances) - 1, by = 2), function(i) rowSums(distances[, i:(i+1)]))
+
+# plotting pair distribution
+for (i in 1:ncol(pairwise_diffs)) {
+  print(stripplot(pairwise_diffs[,i], pch=16, cex=0.25)) # 1-D Scatter plot
+}
+
+# calculating sums of triplets
+triplet_diffs <- sapply(seq(1, ncol(distances) - 1, by = 3), function(i) rowSums(distances[, i:(i+1)]))
+
+# plotting triplet distribution
+for (i in 1:ncol(triplet_diffs)) {
+  print(stripplot(triplet_diffs[,i], pch=16, cex=0.25)) # 1-D Scatter plot
+}
+

@@ -308,7 +308,6 @@ The shorter DNA regions have notably more variance compared to the DNA sequences
 The shorter sequences also have more outliers of a higher density, indicating a greater likelihood of having palindromes compared to longer sequences; this is supported by our quantitative analysis.
 
 ### Conclusion
-<<<<<<< HEAD
 
 When our region of non-overlapping DNA is shorter, we are sampling less DNA and are more likely to think there is a significant difference of counts of palindromes in our DNA sequence compared to a uniform random scatter.
 As we increased our DNA region length, our p-value also went up.
@@ -326,7 +325,6 @@ A good analogy is that you are more likely to find palindromes in shorter words 
 ### Conclusion
 =======
 When our region of non-overlapping DNA is shorter, we are sampling less DNA and are more likely to think there is a significant difference of counts of palindromes in our DNA sequence compared to a uniform random scatter. As we increased our DNA region length, our p-value also went up. As we observe more DNA consecutively, we see that the pattern of palindromes does not really occur at such a high rate as it appears to in the smaller regions. A good analogy is that you are more likely to find palindromes in shorter words (eg 'mom', 'dad') than a full sentence (eg "Was it a car or a cat I saw?"). 
->>>>>>> 1ea1231f1360a69a992597378b7f62968283c4df
 
 \pagebreak
 
@@ -353,7 +351,6 @@ Here, we will analyze each step we are suggesting to the biologist to find the o
 * CON: Building a suffix tree may be take up a lot of memory, especially for larger sequences. It is also very complex to implement a suffix tree compared to the other two proposed methods. 
 
 ### CONCLUSION
-<<<<<<< HEAD
 Considering our pros and cons, it seems like the best option we should recommend to a biologist to find the origin of replication of DNA is to implement suffix trees. However, as in all the methods we have suggested above, this requires 1) confirming whether palindromes are truly a sign of the origin of replication in DNA and 2) ensuring we take sample sizes of DNA of a reasonable length so that we don't inadvertently ignore a palindrome that is longer than our sample sequence. 
 
 \pagebreak
@@ -361,4 +358,3 @@ Considering our pros and cons, it seems like the best option we should recommend
 
 =======
 Considering our pros and cons, it seems like the best option we should recommend to a biologist to find the origin of replication of DNA is to implement suffix trees. However, as in all the methods we have suggested above, this requires 1) confirming whether palindromes are truly a sign of the origin of replication in DNA and 2) ensuring we take sample sizes of DNA of a reasonable length so that we don't inadvertently ignore a palindrome that is longer than our sample sequence. 
->>>>>>> 1ea1231f1360a69a992597378b7f62968283c4df

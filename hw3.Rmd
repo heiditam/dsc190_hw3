@@ -22,9 +22,7 @@ Student 1 mainly worked on questions 1, 3, and 5.
 
 ## Student 2
 
-Student 2 mainly worked on questions 2 and 4, the advanced analysis, and formatting the Rmd filee.
-
-\pagebreak
+Student 2 mainly worked on questions 2 and 4, the advanced analysis, and formatting the Rmd file.
 
 \pagenumbering{arabic}
 
@@ -39,7 +37,7 @@ They discovered a total of 296 palindromic sequences, each of which are at least
 
 ### Objective
 
-The goals of this report are to investigate the distribution of genes among this DNA sequence.
+The goals of this report are to investigate the distribution of palindromes among this DNA sequence. We aim to determine if, at all, the distribution of palindromes deviates from the a uniform, random distribution across the sequence and if thee presence of any clustering of palindromes is due to chance.
 
 \pagebreak
 
@@ -48,19 +46,9 @@ The goals of this report are to investigate the distribution of genes among this
 ## Question 1: RANDOM SCATTER
 
 ### Methods
-
-Here, we are using `sample.int` to conduct 1 simulation assuming a uniform spread.
-
-```{r}
-N = 229354
-n = 296
-set.seed(10)
-random_1 <- as.vector(sample.int(N, size=n, replace=FALSE)) # locations uniformly randomly generated
-```
-
 We're interested in seeing how simulations vary when repeated many times, so we used `replicate` to take 100 simulations of a DNA sequence, with each simulation containing 296 palindrome sites.
 
-```{r data, echo=FALSE}
+```{r data}
 # SIMPLIFY = FALSE KEEPS EACH RESULT AS A SEPARATE VECTOR
 num_sim = 100
 N = 229354
@@ -223,7 +211,6 @@ First, we will check the conditions to make sure we can conduct this test.
 
 -   **Expected Frequency \> 5**: When we have regions of length 1000 each, we would expect each region to have 296 / 230 chunks = 1.287 palindromes per chunk.
     We will still perform the chi-squared test, but it may not be accurate, so we need to be careful.
-    \*\*
 
 ```{r}
 # number of palindromes we would expect for each region
@@ -238,6 +225,7 @@ chi_squared_test <- chisq.test(counts_1000, p = expected_prob)
 With a p-value of 0.004 \< 0.05, we reject the null hypothesis, and there is a difference between the number of palindromes in regions of length 1000 and a uniform random scatter.
 
 Now, we will repeat this process but with larger region sizes.
+
 REGIONS OF SIZE 5,000
 
 ```{r}
@@ -258,6 +246,7 @@ chi_squared_test_5k <- chisq.test(counts_5000, p = expected_prob_5k)
 Our p-value from this chi-squared test is now 0.02, which is \< 0.05.
 We still reject the null hypothesis, and there is a difference between the number of palindromes in regions of length 1000 and a uniform random scatter.
 We will conduct this statistical test one last time with regions of size 10,000.
+
 REGIONS OF SIZE 10,000
 
 ```{r}
@@ -276,7 +265,7 @@ We fail to reject the null hypothesis, and there is no significant difference be
 GRAPHICAL ANALYSIS: To compare the counts of palindromes across different regions, we need to normalize them since the regions are of different lengths.
 We will find the number of palindromes per 1000 base pairs.
 
-```{r}
+```{r, echo=FALSE}
 library(ggplot2)
 library(forcats)
 # 
@@ -313,16 +302,67 @@ A good analogy is that you are more likely to find palindromes in shorter words 
 # Question 4: THE BIGGEST CLUSTER
 
 ### Methods
+In order to determine if any particular interval contains an abnormally high count of palindromes, we graphed our sample data from Question 3 into a frequency histogram. 
+
+```{r, echo=FALSE}
+library(ggplot2)
+
+data_df <- as.data.frame(normalized_1000)
+data_df <- cbind(locations = rownames(data_df), data_df)
+rownames(data_df) <- 1:nrow(data_df)
+colnames(data_df) <- c("Interval", "Frequency")
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 5))
+
+# Plot a histogram
+int_5 <- ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Interval = 5") +
+  theme_minimal()
+
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 10))
+
+# Plot a histogram
+int_10 <- ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Interval = 10") +
+  theme_minimal()
+
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 15))
+
+# Plot a histogram
+int_15 <- ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Interval = 15") +
+  theme_minimal()
+
+
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 20))
+
+# Plot a histogram
+int_20 <- ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Interval = 20") +
+  theme_minimal()
+
+
+grid.arrange(int_5,int_10,int_15,int_20)
+```
 
 ### Analysis
+Upon viewing the histograms built with various intervals, it is clear that the distribution of palindromes is centered on the first half of the interquartile range. This concentration of palindromes in consistent for all granularities of intervals.
 
 ### Conclusion
+In conclusion, there are intervals that indicate a possible origin of replication. Our exploration of different intervals revealed that there is a consistent region that contains a large count of palindromes. 
 
 \pagebreak
 
 # Question 5: ADVICE TO BIOLOGIST TO FIND ORIGIN OF REPLICATION
 
-### METHODS
+### Methods
 
 We would suggest the following to a biologist to find the origin of replication.
 
@@ -340,7 +380,7 @@ We would suggest the following to a biologist to find the origin of replication.
 
     3.  SUFFIX TREES: We would recommend searching for palindromes through a data structure that would allow for efficient pattern matching, such as suffix trees.
 
-### ANALYSIS
+### Analysis
 
 Here, we will analyze each step we are suggesting to the biologist to find the origin of replication of DNA.
 
@@ -364,11 +404,56 @@ Here, we will analyze each step we are suggesting to the biologist to find the o
         -   CON: Building a suffix tree may be take up a lot of memory, especially for larger sequences.
             It is also very complex to implement a suffix tree compared to the other two proposed methods.
 
-### CONCLUSION
+### Conclusion
 
 Considering our pros and cons, it seems like the best option we should recommend to a biologist to find the origin of replication of DNA is to implement suffix trees.
 However, as in all the methods we have suggested above, this requires 1) confirming whether palindromes are truly a sign of the origin of replication in DNA and 2) ensuring we take sample sizes of DNA of a reasonable length so that we don't inadvertently ignore a palindrome that is longer than our sample sequence.
 
-\pagebreak
-
 # Advanced Analysis
+After exploring various ways to analyze the distribution of palindromes through graphical and quantitative ways, we were interested in visualizing the various patterns we recognized through Fourier analysis. Fourier analysis transforms the data in such a way where we can detect periodic patterns or regular spacing in palindrome locations, which could reveal structural motifs or functional patterns.
+
+### Methods
+We produced a single sample to model with Fourier analysis and then transformed the data with the signal package to produce this graph.
+```{r, echo=FALSE}
+library(signal)
+
+N <- 229354 # Total DNA length
+n <- 296
+set.seed(10)
+locations <- sample.int(N, size=n, replace=FALSE)
+signal <- numeric(N)
+signal[locations] <- 1
+
+fft_result <- fft(signal)
+
+# Get magnitudes (spectral density)
+magnitude <- Mod(fft_result)
+
+# Plot frequency spectrum (only the first half of frequencies is needed)
+freq <- seq(0, length(magnitude) / 2 - 1)
+plot(freq, magnitude[1:(length(magnitude) / 2)], type = "l",
+     main = "Fourier Transform of Palindrome Locations",
+     xlab = "Frequency", ylab = "Magnitude")
+```
+
+### Analysis
+As you can see from the frequency spectrum, there is a significant spike in the presence of palindromes in the beginning intervals of the sample. This pattern is not seen at the same magnitude for the rest of the sample.
+
+### Conclusion
+The outcome of this Fourier analysis follows our results from our other analyses. The distribution of palindromes in our data is clustered towards the beginning intervals of the sample, which is consistent with the other conclusions we obtained.
+
+# Conclusion & Discussion
+In conclusion, simulated random scatter of palindrome sites showed a relatively even spread across the DNA sequence, as expected from random distributions. The actual palindrome locations, however, exhibited clustering that was not typical of random distributions, suggesting non-random organization.
+Quantitative comparisons (e.g., variance in distances between palindromes) reinforced this clustering, Real data showed regions with unusually short gaps between palindromes, suggesting possible functional clustering. Additionally, the Fourier analysis identified weak periodic patterns, indicating some regular spacing that may correspond to structural motifs. Such periodic patterns, though subtle, can be associated with known organizational patterns in viral DNA, which is compactly organized for efficient replication.
+
+However, there are some limitations that are inherent with the data and structure of analysis. With only 296 palindromic sequences across a large DNA sequence, there may be limitations in detecting smaller clusters or subtle periodic patterns. While the random simulations help provide a baseline, more sophisticated randomization methods could better mimic the DNA environment. Additionally, palindromic sequences are only one type of potentially functional motif. Finally, analysis of additional motifs or sequence types could provide a more comprehensive understanding.
+
+Overall, these findings suggest that palindrome clustering may indicate structural or functional motifs relevant to CMV replication, aligning with findings from related viral DNA studies. Further exploration could focus on experimental validation and broader motif analysis to strengthen biological insights.
+
+
+
+
+
+
+
+

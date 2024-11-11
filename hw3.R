@@ -109,20 +109,65 @@ ggplot(palindrome_counts, aes(x = RegionLength, y = Count, fill = RegionLength))
 # QUESTION 4
 library(ggplot2)
 
-
-normalized_1000 <- counts_1000 / 1000 * 1000
-normalized_5000 <- counts_5000 / 5000 * 1000
-normalized_10000 <- counts_10000 / 10000 * 1000
-normalized_1000
-
 data_df <- as.data.frame(normalized_1000)
 data_df <- cbind(locations = rownames(data_df), data_df)
 rownames(data_df) <- 1:nrow(data_df)
 colnames(data_df) <- c("Interval", "Frequency")
 
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 5))
+
 # Plot a histogram
-ggplot(data_df, aes(x = as.numeric(Interval), y = Frequency)) +
+ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
   geom_bar(stat = "identity", fill = "skyblue", color = "black") +
-  labs(x = "Number of Palindromes per Region", y = "Frequency", 
+  labs(x = "Region", y = "Frequency", 
        title = "Histogram of Palindrome Count per Region") +
   theme_minimal()
+
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 10))
+
+# Plot a histogram
+ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Histogram of Palindrome Count per Region") +
+  theme_minimal()
+
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 15))
+
+# Plot a histogram
+ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Histogram of Palindrome Count per Region") +
+  theme_minimal()
+
+
+data_df$Interval_grouped <- cut(as.numeric(data_df$Interval), breaks = seq(0, max(as.numeric(data_df$Interval)), by = 20))
+
+# Plot a histogram
+ggplot(data_df, aes(x = as.numeric(Interval_grouped), y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(x = "Region", y = "Frequency", 
+       title = "Histogram of Palindrome Count per Region") +
+  theme_minimal()
+
+# ADVANCED ANALYSIS
+install.packages("signal") # for additional signal processing functions
+library(signal)
+
+N <- 229354 # Total DNA length
+n <- 296
+locations <- sample.int(N, size=n, replace=FALSE)
+signal <- numeric(N)
+signal[locations] <- 1
+
+fft_result <- fft(signal)
+
+# Get magnitudes (spectral density)
+magnitude <- Mod(fft_result)
+
+# Plot frequency spectrum (only the first half of frequencies is needed)
+freq <- seq(0, length(magnitude) / 2 - 1)
+plot(freq, magnitude[1:(length(magnitude) / 2)], type = "l",
+     main = "Fourier Transform of Palindrome Locations",
+     xlab = "Frequency", ylab = "Magnitude")
